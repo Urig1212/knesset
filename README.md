@@ -14,3 +14,8 @@ npm run dev
 ```bash
 npm run build
 ```
+
+## נכסים
+
+- לוגו מקור ראשון: Wikimedia Commons, `Makor_Rishon_logo.svg`.
+- צילום מליאת הכנסת: Wikimedia Commons, `Knesset Hall.JPG`.

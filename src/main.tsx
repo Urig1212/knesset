@@ -51,7 +51,8 @@ type DragState = {
 };
 
 const makorLogo =
-  "https://upload.wikimedia.org/wikipedia/commons/8/8c/Makor_Rishon_logo.svg";
+  "/assets/makor-rishon-logo.svg";
+const knessetHall = "/assets/knesset-hall.jpg";
 
 const parties: Party[] = [
   {
@@ -271,11 +272,22 @@ function App() {
       </header>
 
       <section className="hero">
-        <div>
+        <div className="heroCopy">
           <p className="eyebrow">כנסת 25 | נתוני בחירות 2022 ופיצולי סיעות</p>
           <h1>מי מצליח להגיע ל־{rules.majorityTarget}?</h1>
+          <div className="heroMeta" aria-label="מצב המשחק">
+            <span>{stats.coalitionSeats} בקואליציה</span>
+            <span>{stats.supportSeats} מבחוץ</span>
+            <span>{parties.length} מפלגות</span>
+          </div>
         </div>
-        <ScoreGauge stats={stats} rules={rules} />
+        <div className="heroVisual">
+          <img src={knessetHall} alt="" />
+          <div className="heroOverlay">
+            <ScoreGauge stats={stats} rules={rules} />
+            <MandateWall zones={zones} />
+          </div>
+        </div>
       </section>
 
       <section className="workbench">
@@ -515,6 +527,28 @@ function ScoreGauge({ stats, rules }: { stats: ReturnType<typeof evaluate>; rule
         <b>{stats.canGovern ? "יש רוב" : "אין רוב"}</b>
         <span>{stats.supportSeats ? `${stats.totalEffectiveSeats} כולל תמיכה` : `יעד ${rules.majorityTarget}`}</span>
       </div>
+    </div>
+  );
+}
+
+function MandateWall({ zones }: { zones: Record<string, Zone> }) {
+  const seats = parties.flatMap((party) =>
+    Array.from({ length: party.seats }, (_, index) => ({
+      id: `${party.id}-${index}`,
+      party,
+      zone: zones[party.id],
+    }))
+  );
+
+  return (
+    <div className="mandateWall" aria-hidden="true">
+      {seats.map((seat) => (
+        <i
+          key={seat.id}
+          className={`mandateSeat ${seat.zone}`}
+          style={{ "--party": seat.party.color } as React.CSSProperties}
+        />
+      ))}
     </div>
   );
 }
