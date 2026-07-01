@@ -222,6 +222,7 @@ function App() {
   const [zones, setZones] = useState<Record<string, Zone>>(defaultZones);
   const [rules, setRules] = useState<Rules>(defaultRules);
   const [drag, setDrag] = useState<DragState | null>(null);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const byZone = useMemo(() => {
     const result: Record<Zone, Party[]> = { pool: [], coalition: [], support: [] };
@@ -415,6 +416,15 @@ function App() {
           <IssueList issues={stats.issues} />
         </aside>
       </section>
+
+      <MobilePartyDrawer
+        open={mobileDrawerOpen}
+        parties={parties}
+        zones={zones}
+        onOpen={() => setMobileDrawerOpen(true)}
+        onClose={() => setMobileDrawerOpen(false)}
+        onMove={setPartyZone}
+      />
 
       {drag && (
         <div className="dragPreview" style={{ right: window.innerWidth - drag.x - 80, top: drag.y - 44 }}>
@@ -655,6 +665,111 @@ function PartyCard({
       )}
     </article>
   );
+}
+
+function MobilePartyDrawer({
+  open,
+  parties: drawerParties,
+  zones,
+  onOpen,
+  onClose,
+  onMove,
+}: {
+  open: boolean;
+  parties: Party[];
+  zones: Record<string, Zone>;
+  onOpen: () => void;
+  onClose: () => void;
+  onMove: (partyId: string, zone: Zone) => void;
+}) {
+  const poolCount = drawerParties.filter((party) => zones[party.id] === "pool").length;
+  const coalitionSeats = sumSeats(drawerParties.filter((party) => zones[party.id] === "coalition"));
+  const supportSeats = sumSeats(drawerParties.filter((party) => zones[party.id] === "support"));
+
+  return (
+    <div className={`mobilePartyDock ${open ? "open" : ""}`}>
+      <button className="mobileDockButton" onClick={onOpen}>
+        <Users size={18} />
+        <span>מפלגות</span>
+        <b>{poolCount}</b>
+      </button>
+      {open && <button className="mobileScrim" aria-label="סגירה" onClick={onClose} />}
+      <section className="mobilePartySheet" aria-hidden={!open}>
+        <div className="mobileSheetHandle" />
+        <div className="mobileSheetHeader">
+          <div>
+            <h2>מפלגות</h2>
+            <span>{coalitionSeats} בקואליציה · {supportSeats} תמיכה</span>
+          </div>
+          <button className="sheetClose" onClick={onClose} aria-label="סגירה">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="mobilePartyList">
+          {drawerParties
+            .slice()
+            .sort((a, b) => {
+              const zoneRank: Record<Zone, number> = { pool: 0, coalition: 1, support: 2 };
+              return zoneRank[zones[a.id]] - zoneRank[zones[b.id]] || b.seats - a.seats;
+            })
+            .map((party) => (
+              <MobilePartyRow
+                key={party.id}
+                party={party}
+                zone={zones[party.id]}
+                onMove={onMove}
+              />
+            ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function MobilePartyRow({
+  party,
+  zone,
+  onMove,
+}: {
+  party: Party;
+  zone: Zone;
+  onMove: (partyId: string, zone: Zone) => void;
+}) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <article className="mobilePartyRow" style={{ "--party": party.color } as React.CSSProperties}>
+      <div className="partyLogo" aria-hidden="true">
+        {!failed && <img src={party.logo} alt="" onError={() => setFailed(true)} draggable={false} />}
+        {failed && <span>{party.short}</span>}
+      </div>
+      <div className="mobilePartyInfo">
+        <h3>{party.name}</h3>
+        <span>{party.seats} מנדטים · {zoneLabel(zone)}</span>
+      </div>
+      <div className="mobilePartyActions">
+        <button
+          className={zone === "coalition" ? "selected" : ""}
+          onClick={() => onMove(party.id, zone === "coalition" ? "pool" : "coalition")}
+        >
+          <Crown size={15} />
+          <span>קואליציה</span>
+        </button>
+        <button
+          className={zone === "support" ? "selected" : ""}
+          onClick={() => onMove(party.id, zone === "support" ? "pool" : "support")}
+        >
+          <Handshake size={15} />
+          <span>תמיכה</span>
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function zoneLabel(zone: Zone) {
+  if (zone === "coalition") return "בקואליציה";
+  if (zone === "support") return "תמיכה מבחוץ";
+  return "זמינה";
 }
 
 function StatusLine({ ok, label }: { ok: boolean; label: string }) {

@@ -634,6 +634,10 @@ h1 {
   color: #174e89;
 }
 
+.mobilePartyDock {
+  display: none;
+}
+
 @media (max-width: 1120px) {
   .workbench {
     grid-template-columns: 1fr;
@@ -652,6 +656,7 @@ h1 {
 @media (max-width: 720px) {
   .app {
     padding-inline: 10px;
+    padding-bottom: 96px;
   }
 
   .topbar {
@@ -667,7 +672,7 @@ h1 {
   }
 
   .brand img {
-    width: min(320px, 76vw);
+    width: min(280px, 70vw);
   }
 
   .brand span {
@@ -678,21 +683,30 @@ h1 {
   .hero {
     grid-template-columns: 1fr;
     min-height: 0;
-    padding: 18px 0 20px;
+    padding: 10px 0 14px;
   }
 
   h1 {
-    font-size: clamp(2.32rem, 12vw, 4.2rem);
+    font-size: clamp(2.05rem, 10.6vw, 3.5rem);
+  }
+
+  .eyebrow {
+    font-size: 0.86rem;
+  }
+
+  .heroMeta {
+    gap: 6px;
+    margin-top: 14px;
   }
 
   .heroMeta span {
-    min-height: 34px;
-    padding-inline: 11px;
-    font-size: 0.88rem;
+    min-height: 31px;
+    padding-inline: 10px;
+    font-size: 0.8rem;
   }
 
   .heroVisual {
-    min-height: 310px;
+    min-height: 250px;
   }
 
   .heroOverlay {
@@ -702,26 +716,299 @@ h1 {
   .scoreGauge {
     min-width: 0;
     width: 100%;
+    padding: 10px;
+  }
+
+  .scoreRing {
+    width: 76px;
+  }
+
+  .scoreRing strong {
+    top: 19px;
+    font-size: 1.45rem;
+  }
+
+  .scoreRing span {
+    bottom: 17px;
+    font-size: 0.66rem;
+  }
+
+  .scoreGauge div:last-child b {
+    font-size: 1.22rem;
   }
 
   .mandateWall {
     grid-template-columns: repeat(15, 1fr);
     gap: 4px;
+    padding: 10px;
+  }
+
+  .mandateSeat {
+    height: 7px;
+  }
+
+  .workbench {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 14px;
+  }
+
+  .gameArea {
+    order: 1;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .statusPanel {
+    order: 2;
+    width: 100%;
+  }
+
+  .rulesPanel {
+    order: 3;
+    width: 100%;
+  }
+
+  .dropZone {
+    min-height: 124px;
+    padding: 13px;
+  }
+
+  .dropZone[data-zone="pool"] {
+    display: none;
+  }
+
+  .zoneHeader {
+    padding-bottom: 9px;
+  }
+
+  .zoneHeader b {
+    min-width: 46px;
+    height: 36px;
+    font-size: 1.08rem;
   }
 
   .partyGrid {
     grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   .partyCard {
+    min-height: 72px;
     grid-template-columns: 48px minmax(0, 1fr) auto 32px;
+    padding: 8px;
   }
 
   .partyLogo {
     width: 46px;
   }
 
+  .partyMain h3 {
+    font-size: 0.94rem;
+  }
+
+  .seats {
+    min-width: 34px;
+    height: 34px;
+    font-size: 1.05rem;
+  }
+
   .meters {
     grid-template-columns: 1fr;
+  }
+
+  .mobilePartyDock {
+    display: block;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 50;
+    pointer-events: none;
+  }
+
+  .mobileDockButton {
+    pointer-events: auto;
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    min-height: 58px;
+    border: 1px solid rgba(23, 23, 23, 0.18);
+    border-radius: 8px;
+    background: linear-gradient(135deg, #171717, #3b2b26);
+    color: #fff;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    box-shadow: 0 20px 45px rgba(23, 23, 23, 0.28);
+    font-weight: 900;
+  }
+
+  .mobileDockButton b {
+    min-width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    color: #171717;
+  }
+
+  .mobileScrim {
+    pointer-events: auto;
+    position: fixed;
+    inset: 0;
+    border: 0;
+    background: rgba(18, 18, 18, 0.16);
+  }
+
+  .mobilePartySheet {
+    pointer-events: auto;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: min(72vh, 620px);
+    border-radius: 8px 8px 0 0;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 243, 236, 0.96)),
+      #fff;
+    border: 1px solid rgba(23, 23, 23, 0.15);
+    box-shadow: 0 -24px 70px rgba(23, 23, 23, 0.28);
+    transform: translateY(calc(100% + 12px));
+    transition: transform 0.2s ease;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    padding: 8px 10px 14px;
+  }
+
+  .mobilePartyDock.open .mobilePartySheet {
+    transform: translateY(0);
+  }
+
+  .mobilePartyDock.open .mobileDockButton {
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+  }
+
+  .mobileSheetHandle {
+    width: 46px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(23, 23, 23, 0.22);
+    justify-self: center;
+    margin: 2px 0 8px;
+  }
+
+  .mobileSheetHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 2px 10px;
+  }
+
+  .mobileSheetHeader h2 {
+    margin: 0;
+    font-size: 1.18rem;
+  }
+
+  .mobileSheetHeader span {
+    display: block;
+    color: #68615a;
+    font-weight: 800;
+    font-size: 0.86rem;
+    margin-top: 3px;
+  }
+
+  .sheetClose {
+    width: 42px;
+    aspect-ratio: 1;
+    border: 1px solid rgba(23, 23, 23, 0.13);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    color: #171717;
+  }
+
+  .mobilePartyList {
+    overflow: auto;
+    display: grid;
+    gap: 8px;
+    padding: 2px 0 4px;
+    overscroll-behavior: contain;
+  }
+
+  .mobilePartyRow {
+    --party: #1c63b5;
+    min-height: 78px;
+    display: grid;
+    grid-template-columns: 46px minmax(0, 1fr);
+    grid-template-areas:
+      "logo info"
+      "actions actions";
+    gap: 8px 10px;
+    border: 1px solid rgba(23, 23, 23, 0.12);
+    border-right: 7px solid var(--party);
+    border-radius: 8px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--party) 8%, #fff), #fff 52%);
+    padding: 9px;
+    box-shadow: 0 10px 24px rgba(23, 23, 23, 0.08);
+  }
+
+  .mobilePartyRow .partyLogo {
+    grid-area: logo;
+    width: 44px;
+  }
+
+  .mobilePartyInfo {
+    grid-area: info;
+    align-self: center;
+    min-width: 0;
+  }
+
+  .mobilePartyInfo h3 {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.15;
+  }
+
+  .mobilePartyInfo span {
+    display: block;
+    margin-top: 4px;
+    color: #6b6259;
+    font-weight: 800;
+    font-size: 0.82rem;
+  }
+
+  .mobilePartyActions {
+    grid-area: actions;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .mobilePartyActions button {
+    min-height: 38px;
+    border: 1px solid rgba(23, 23, 23, 0.13);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.86);
+    color: #25211d;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 900;
+  }
+
+  .mobilePartyActions button.selected {
+    border-color: color-mix(in srgb, var(--party) 58%, #fff);
+    background: color-mix(in srgb, var(--party) 18%, #fff);
+    color: color-mix(in srgb, var(--party) 82%, #111);
   }
 }
